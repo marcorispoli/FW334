@@ -188,9 +188,13 @@ static const unsigned char  APPLICATION_SUB_REV =  1 ;  //!< Revision build Numb
 //#define GET_FASE_FROM_CONST 1
 
 //___________________ IMPOSTAZIONE DAC _____________________
-#define DAC_REFERENCE 3.3
-#define DAC(I) (unsigned short) (I * 75 * 65.535 / DAC_REFERENCE)
+#define SENS_VREF 2.5       // Volt
+#define SENS_ISENSE 100     // mV/A
+#define DAC_REFERENCE 3.3   // Impostazione uC-DAC
 
+#define MAX_SENS_CURRENT (SENS_VREF*1000/SENS_ISENSE)
+#define DAC(I) (unsigned short) (I * SENS_ISENSE * 65.535 / DAC_REFERENCE)
+ 
 //___________________ PERFORMANCES _____________________
 #define VAC_INPUT (220*1.4)    
 #define VAC_THRESHOLD 5
@@ -201,7 +205,7 @@ static const unsigned char  APPLICATION_SUB_REV =  1 ;  //!< Revision build Numb
 
 // target di tensione e corrente
 #define TARGET_VOLTAGE 560
-#define MAX_CURRENT 2
+#define MAX_CURRENT 20
 
 #define MIN_VACIN (VAC_INPUT*0.7)
 #define ALARM_VAC_TMO 200 // 15ms unit alarm vac reset time
