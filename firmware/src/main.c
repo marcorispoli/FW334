@@ -38,7 +38,7 @@ volatile static uint8_t trigger_time = 0;
 
 volatile static bool alarm_overcurrent = false;
 volatile static bool target = false;
-
+volatile static unsigned short DACVAL = 0;
 
 static void mosfetActivation(bool state){
     #ifdef MOSFET_SWITCH_ENABLED
@@ -259,9 +259,8 @@ static void ExecControl(bool init){
 
 
     // Shape della corrente
-    Ifollow = (Iref * fase);  
-    unsigned short DACVAL = DAC(Ifollow);
-    
+    Ifollow = (Iref * fase);     
+    DACVAL = DAC(Ifollow);
     DAC_DataWrite(DAC_CHANNEL_0,DACVAL);  
     
      // Se la tensione massima di ingresso è bassa interrompe l'inseguimento

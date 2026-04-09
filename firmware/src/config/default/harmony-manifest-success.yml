@@ -4,10 +4,10 @@
 
 
 project: FW334
-creation_date: 2025-09-15T17:25:15.444+02:00[Europe/Berlin]    # ISO 8601 format: https://www.w3.org/TR/NOTE-datetime
+creation_date: 2026-04-09T10:59:35.948+02:00[Europe/Berlin]    # ISO 8601 format: https://www.w3.org/TR/NOTE-datetime
 operating_system: Windows 10
 mcc_mode: IDE            # [IDE|Standalone|Headless]
-mcc_version: v5.5.0
+mcc_version: v5.5.1
 mcc_core_version: v5.7.0
 mplabx_version: v6.20        # if MPLAB X plugin only
 harmony_version: v1.3.2

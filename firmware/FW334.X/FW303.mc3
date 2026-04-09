@@ -9305,7 +9305,7 @@
         &lt;ElementPosition dnOrder=&quot;2&quot; id=&quot;can0&quot; x=&quot;340&quot; y=&quot;20&quot;/&gt;
         &lt;ElementPosition dnOrder=&quot;3&quot; id=&quot;cmsis&quot; x=&quot;30&quot; y=&quot;240&quot;/&gt;
         &lt;ElementPosition dnOrder=&quot;4&quot; id=&quot;core&quot; x=&quot;30&quot; y=&quot;200&quot;/&gt;
-        &lt;ElementPosition dnOrder=&quot;5&quot; id=&quot;dac&quot; x=&quot;818&quot; y=&quot;20&quot;/&gt;
+        &lt;ElementPosition dnOrder=&quot;5&quot; id=&quot;dac&quot; x=&quot;817&quot; y=&quot;21&quot;/&gt;
         &lt;ElementPosition dnOrder=&quot;6&quot; id=&quot;dfp&quot; x=&quot;30&quot; y=&quot;160&quot;/&gt;
         &lt;ElementPosition dnOrder=&quot;7&quot; id=&quot;evsys&quot; x=&quot;30&quot; y=&quot;100&quot;/&gt;
         &lt;ElementPosition dnOrder=&quot;8&quot; id=&quot;nvmctrl&quot; x=&quot;20&quot; y=&quot;20&quot;/&gt;
@@ -18105,7 +18105,7 @@
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;dac&gt;
   &lt;dac dnOrder=&quot;0&quot; id=&quot;DAC_REFSEL&quot;&gt;
     &lt;Values dnOrder=&quot;0&quot;&gt;
-      &lt;User dnOrder=&quot;0&quot; value=&quot;3&quot;/&gt;
+      &lt;User dnOrder=&quot;0&quot; value=&quot;1&quot;/&gt;
     &lt;/Values&gt;
   &lt;/dac&gt;
 &lt;/dac&gt;
@@ -22314,7 +22314,7 @@
       </entry>
       <entry>
          <file>..\src\config\default\definitions.h</file>
-         <hash>a2e689cec1efe4d61743946a94e2825576ee57c0c2a8f465dc951e3ef8e55709</hash>
+         <hash>cdedf0c6d52ca748c21a7ee9e135761a67174f349161dc6a139e95c43cba7a39</hash>
       </entry>
       <entry>
          <file>..\src\config\default\device.h</file>
@@ -22334,7 +22334,7 @@
       </entry>
       <entry>
          <file>..\src\config\default\initialization.c</file>
-         <hash>2809c60873a72ac05e7be832bb38cbd18a0eaea56e78829020e632027aeec550</hash>
+         <hash>9cfc53d471aa32b91888c936ef221204ae8163f0c4362e969c7dd0845d9c6d4a</hash>
       </entry>
       <entry>
          <file>..\src\config\default\interrupts.c</file>
@@ -22398,7 +22398,7 @@
       </entry>
       <entry>
          <file>..\src\config\default\peripheral\dac\plib_dac.c</file>
-         <hash>471ed274d0cae8d8326a81273b117145942a276ec293d91fa50800fd76a39858</hash>
+         <hash>ba1c03a335bf06c54d56f3ebe2aa6efcd2dcf484be36486e4fc07b9de47e7bd9</hash>
       </entry>
       <entry>
          <file>..\src\config\default\peripheral\dac\plib_dac.h</file>

@@ -188,8 +188,8 @@ static const unsigned char  APPLICATION_SUB_REV =  1 ;  //!< Revision build Numb
 //#define GET_FASE_FROM_CONST 1
 
 //___________________ IMPOSTAZIONE DAC _____________________
-#define SENS_VREF 2.5       // Volt
-#define SENS_ISENSE 100     // mV/A
+#define SENS_VREF 0.33       // Volt
+#define SENS_ISENSE 75     // mV/A
 #define DAC_REFERENCE 3.3   // Impostazione uC-DAC
 
 #define MAX_SENS_CURRENT (SENS_VREF*1000/SENS_ISENSE)

@@ -48,6 +48,26 @@
 
 
 
+// ****************************************************************************
+// ****************************************************************************
+// Section: Configuration Bits
+// ****************************************************************************
+// ****************************************************************************
+#pragma config BOD33_DIS = SET
+#pragma config BOD33USERLEVEL = 0x1c
+#pragma config BOD33_ACTION = RESET
+#pragma config BOD33_HYST = 0x2
+#pragma config NVMCTRL_BOOTPROT = 0
+#pragma config NVMCTRL_SEESBLK = 0x1
+#pragma config NVMCTRL_SEEPSZ = 0x1
+#pragma config RAMECC_ECCDIS = SET
+#pragma config WDT_ENABLE = CLEAR
+#pragma config WDT_ALWAYSON = CLEAR
+#pragma config WDT_PER = CYC8192
+#pragma config WDT_WINDOW = CYC8192
+#pragma config WDT_EWOFFSET = CYC8192
+#pragma config WDT_WEN = CLEAR
+#pragma config NVMCTRL_REGION_LOCKS = 0xffffffff
 
 
 
@@ -111,14 +131,15 @@ void SYS_Initialize ( void* data )
 
     TC0_TimerInitialize();
 
+
     EVSYS_Initialize();
 
     ADC0_Initialize();
+    SERCOM4_I2C_Initialize();
+
     CAN0_Initialize();
 
     ADC1_Initialize();
-    SERCOM4_I2C_Initialize();
-
     RTC_Initialize();
 
     DAC_Initialize();
