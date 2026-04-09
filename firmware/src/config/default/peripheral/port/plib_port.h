@@ -153,6 +153,15 @@
 #define GPIO_PA10_Get()               (((PORT_REGS->GROUP[0].PORT_IN >> 10U)) & 0x01U)
 #define GPIO_PA10_PIN                  PORT_PIN_PA10
 
+/*** Macros for uC_VOUT_ENA pin ***/
+#define uC_VOUT_ENA_Set()               (PORT_REGS->GROUP[0].PORT_OUTSET = ((uint32_t)1U << 11U))
+#define uC_VOUT_ENA_Clear()             (PORT_REGS->GROUP[0].PORT_OUTCLR = ((uint32_t)1U << 11U))
+#define uC_VOUT_ENA_Toggle()            (PORT_REGS->GROUP[0].PORT_OUTTGL = ((uint32_t)1U << 11U))
+#define uC_VOUT_ENA_OutputEnable()      (PORT_REGS->GROUP[0].PORT_DIRSET = ((uint32_t)1U << 11U))
+#define uC_VOUT_ENA_InputEnable()       (PORT_REGS->GROUP[0].PORT_DIRCLR = ((uint32_t)1U << 11U))
+#define uC_VOUT_ENA_Get()               (((PORT_REGS->GROUP[0].PORT_IN >> 11U)) & 0x01U)
+#define uC_VOUT_ENA_PIN                  PORT_PIN_PA11
+
 /*** Macros for uC_ENABLE_CONTACTOR pin ***/
 #define uC_ENABLE_CONTACTOR_Set()               (PORT_REGS->GROUP[1].PORT_OUTSET = ((uint32_t)1U << 10U))
 #define uC_ENABLE_CONTACTOR_Clear()             (PORT_REGS->GROUP[1].PORT_OUTCLR = ((uint32_t)1U << 10U))

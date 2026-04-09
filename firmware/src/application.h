@@ -176,8 +176,8 @@ static const unsigned char  APPLICATION_SUB_REV =  1 ;  //!< Revision build Numb
 
 //___________________ SELEZIONE FUNZIONAMENTO _____________________
 //#define TEST_SWITCH
-//#define TEST_REFERENCE 
-#define RUN_CONST_CURRENT   // Corrente Fissa
+#define TEST_REFERENCE 
+//#define RUN_CONST_CURRENT   // Corrente Fissa
 //#define RUN_CONST_VOLTAGE // Regolazione tensione di uscita
 
 #define MOSFET_SWITCH_ENABLED // Attivazione Switching Mosfets
@@ -205,7 +205,7 @@ static const unsigned char  APPLICATION_SUB_REV =  1 ;  //!< Revision build Numb
 
 // target di tensione e corrente
 #define TARGET_VOLTAGE 560
-#define MAX_CURRENT 20
+#define MAX_CURRENT 5
 
 #define MIN_VACIN (VAC_INPUT*0.7)
 #define ALARM_VAC_TMO 200 // 15ms unit alarm vac reset time
