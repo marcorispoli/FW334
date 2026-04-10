@@ -187,15 +187,16 @@ static const unsigned char  APPLICATION_SUB_REV =  1 ;  //!< Revision build Numb
 
 /** @}*/
 //___________________ SELEZIONE MODULI _____________________
-#define CAN_BUS_ACTIVATION
+#define CAN_BUS_ACTIVATION      // Attivazione Can Bus
+//#define MOSFET_SWITCH_ENABLED   // Attivazione Switching Mosfets
+//#define OUTPUT_SWITCH_ENABLED   // Attivazione Output Mosfets
 
 //___________________ SELEZIONE FUNZIONAMENTO _____________________
 //#define TEST_SWITCH
 //#define TEST_REFERENCE 
-#define RUN_CONST_CURRENT   // Corrente Fissa
-//#define RUN_CONST_VOLTAGE // Regolazione tensione di uscita
+//#define RUN_CONST_CURRENT   // Corrente Fissa
+#define RUN_CONST_VOLTAGE // Regolazione tensione di uscita
 
-#define MOSFET_SWITCH_ENABLED // Attivazione Switching Mosfets
 
 //___________________ SELEZIONE FASE _____________________
 #define GET_FASE_FROM_VAC
@@ -222,6 +223,9 @@ static const unsigned char  APPLICATION_SUB_REV =  1 ;  //!< Revision build Numb
 #define TARGET_VOLTAGE 560
 #define MAX_CURRENT 5
 
-#define MIN_VACIN (VAC_INPUT*0.7)
-#define ALARM_VAC_TMO 200 // 15ms unit alarm vac reset time
+#define MIN_VAC_ALARM (VAC_INPUT*0.5)
+#define MIN_VAC_RESET_ALARM (VAC_INPUT*0.7)
+
+
+#define MAX_IOUT_ALARM 20
 #endif 

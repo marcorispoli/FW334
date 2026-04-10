@@ -3,8 +3,14 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/marco/Documents/Data/Progetti-GIT/FW/FW334/firmware/src/main.c</file>
-            <file>file:/C:/Users/marco/Documents/Data/Progetti-GIT/FW/FW334/firmware/src/application.h</file>
+            <file>file:/C:/Users/m.rispoli/OneDrive%20-%20Metaltronica%20Spa/Documenti/Workspace/Git/FW/FW334/firmware/src/Protocol/protocol.h</file>
+            <file>file:/C:/Users/m.rispoli/OneDrive%20-%20Metaltronica%20Spa/Documenti/Workspace/Git/FW/FW334/firmware/src/application.h</file>
+            <file>file:/C:/Users/m.rispoli/OneDrive%20-%20Metaltronica%20Spa/Documenti/Workspace/Git/FW/FW334/firmware/src/control_loop.h</file>
+            <file>file:/C:/Users/m.rispoli/OneDrive%20-%20Metaltronica%20Spa/Documenti/Workspace/Git/FW/FW334/firmware/src/main.h</file>
+            <file>file:/C:/Users/m.rispoli/OneDrive%20-%20Metaltronica%20Spa/Documenti/Workspace/Git/FW/FW334/firmware/src/adconv.h</file>
+            <file>file:/C:/Users/m.rispoli/OneDrive%20-%20Metaltronica%20Spa/Documenti/Workspace/Git/FW/FW334/firmware/src/control_loop.c</file>
+            <file>file:/C:/Users/m.rispoli/OneDrive%20-%20Metaltronica%20Spa/Documenti/Workspace/Git/FW/FW334/firmware/src/adconv.c</file>
+            <file>file:/C:/Users/m.rispoli/OneDrive%20-%20Metaltronica%20Spa/Documenti/Workspace/Git/FW/FW334/firmware/src/main.c</file>
         </group>
     </open-files>
 </project-private>

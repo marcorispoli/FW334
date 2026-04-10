@@ -273,6 +273,11 @@
       <itemPath>../src/main.c</itemPath>
       <itemPath>../src/application.h</itemPath>
       <itemPath>../src/license.h</itemPath>
+      <itemPath>../src/control_loop.c</itemPath>
+      <itemPath>../src/control_loop.h</itemPath>
+      <itemPath>../src/main.h</itemPath>
+      <itemPath>../src/adconv.c</itemPath>
+      <itemPath>../src/adconv.h</itemPath>
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>
