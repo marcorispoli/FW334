@@ -81,6 +81,7 @@ static void rtcEventHandler (RTC_TIMER32_INT_MASK intCause, uintptr_t context)
 static volatile float VAC = 0;
 static volatile float maxVAC = 0;
 static volatile float minVAC = 0;
+static volatile float vac_threshold = 10; 
 static volatile unsigned char inputFreq = 0;
 static volatile bool  VAC_Initialize = false;
 
@@ -94,10 +95,8 @@ static volatile float maxVOUT = 0;
 static volatile float minVOUT = 0;
 static volatile float IOUT = 0;
 
+#ifdef TEST_SWITCH
 static void TC0callback(TC_TIMER_STATUS status, uintptr_t context){
-#ifndef TEST_SWITCH
-    return;
-#endif
 
     static int count=0;
     count++;
@@ -108,10 +107,11 @@ static void TC0callback(TC_TIMER_STATUS status, uintptr_t context){
     
     LED4_Toggle();
 }
+#endif
 
 #ifdef GET_FASE_FROM_VAC
 static float getFaseFromVac(void){
-    if( (maxVAC-minVAC) < VAC_INPUT/2) return 0;
+    //if( (maxVAC-minVAC) < 10) return 0;
     
     float fase = (VAC - minVAC) / (maxVAC-minVAC);
     if(fase > 1) return 1;
@@ -129,8 +129,8 @@ static  float getFaseFromFunc(void){
     
     // Synch
     if((!synch) && (VAC < minVAC+VAC_THRESHOLD)){
-        time = 0;
         synch = true;
+        time = 0;        
     }else{
         time += AC_SMP_TIME_us;
         
@@ -313,6 +313,7 @@ static void ADC0ExecProcedure(void){
        maxVAC =  parzial_max;
        minVAC =  parzial_min;
        if(minVAC > maxVAC) minVAC = maxVAC;
+       vac_threshold = (maxVAC - minVAC) / 200;
        parzial_max = 0;
        parzial_min = 1000;
        cycles = MAXMIN_VAC_CYCLES;
@@ -429,9 +430,10 @@ int main ( void )
     ADC1_Enable();
     ADC1_ConversionStart();
     
-    // PRECHARGE INITIALIZATION 
+    #ifdef TEST_SWITCH 
     TC0_TimerCallbackRegister( TC0callback, 0 );
-    
+    #endif
+
     // Disable Switching
     mosfetActivation(false);
     DAC_DataWrite(DAC_CHANNEL_0,0);

@@ -165,7 +165,7 @@
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;adc0&gt;
   &lt;adc0 dnOrder=&quot;0&quot; id=&quot;ADC_CONV_TRIGGER&quot;&gt;
     &lt;Values dnOrder=&quot;0&quot;&gt;
-      &lt;User dnOrder=&quot;0&quot; value=&quot;Free Run&quot;/&gt;
+      &lt;User dnOrder=&quot;0&quot; value=&quot;SW Trigger&quot;/&gt;
     &lt;/Values&gt;
   &lt;/adc0&gt;
 &lt;/adc0&gt;
@@ -22324,7 +22324,7 @@
       </entry>
       <entry>
          <file>..\src\config\default\definitions.h</file>
-         <hash>cdedf0c6d52ca748c21a7ee9e135761a67174f349161dc6a139e95c43cba7a39</hash>
+         <hash>c0d3bc8afdacafdd5aeca562db3e2618da1667fc6bd98d07dd84774b359e0550</hash>
       </entry>
       <entry>
          <file>..\src\config\default\device.h</file>
@@ -22344,7 +22344,7 @@
       </entry>
       <entry>
          <file>..\src\config\default\initialization.c</file>
-         <hash>9cfc53d471aa32b91888c936ef221204ae8163f0c4362e969c7dd0845d9c6d4a</hash>
+         <hash>ac80181928fc51e302ed0027b66293143468be5b7208443b35070a4a782012ed</hash>
       </entry>
       <entry>
          <file>..\src\config\default\interrupts.c</file>
@@ -22360,7 +22360,7 @@
       </entry>
       <entry>
          <file>..\src\config\default\peripheral\adc\plib_adc0.c</file>
-         <hash>3acc810fcfa98c9227e748febdd18bcd6baebedecbdb0d9dc602e733fbd0b114</hash>
+         <hash>ddf9b6025830f78b3289cdd993210dd3ebd891c23e6ece49a1143f072f9c518b</hash>
       </entry>
       <entry>
          <file>..\src\config\default\peripheral\adc\plib_adc0.h</file>

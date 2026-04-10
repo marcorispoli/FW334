@@ -129,7 +129,6 @@ void SYS_Initialize ( void* data )
     CLOCK_Initialize();
 
 
-    TC0_TimerInitialize();
 
 
     EVSYS_Initialize();
@@ -137,10 +136,12 @@ void SYS_Initialize ( void* data )
     ADC0_Initialize();
     SERCOM4_I2C_Initialize();
 
+    ADC1_Initialize();
     CAN0_Initialize();
 
-    ADC1_Initialize();
     RTC_Initialize();
+
+    TC0_TimerInitialize();
 
     DAC_Initialize();
 

@@ -134,14 +134,29 @@
  * 
  * ### TC0 CONFIGURATION
  * 
- * + Counter mode: 16bit mode;
- * + Select Prescaler: GLK_TC;
- * + Operating mode: Timer;
- * + Enable One-Shot mode: yes;
- * + Timer Period Unit: microsecond;
- * + Time: 1 
- * + Enable Timer Period Interrupt: yes;
  *  
+ * ### AC0 CONFIGURATION
+ * 
+ * + Peripheral Clock divide: 4
+ * + Sample Lenght: 32
+ * + Conversion Time: 4us
+ * + Select Reference: VDDANA
+ * + Select Conversion Trigger: SW Trigger 
+ * + Select Result Resolution : For Averaging mode output
+ * + Accumulated Samples: 16
+ * + Left Aligned Result
+ * + Enable Result Ready Interrupt
+ * 
+ * ### DAC CHANNEL 0 CONFIGURATION
+ * 
+ * + Select DAC Output Mode: Single-Ended Output
+ * + Reference Selection for DAC: Analog Supply
+ * + Enable DAC channel 0
+ * + Conversione Speed: 1MSPS
+ * +DAC Data Register Adjustment: LEFT-ADJUSTED
+ * + Run in Standby: yes
+ * + Oversampling: No Oversampling
+ * + Refresh Rate: Do no refresh
  * 
  * # Licensing
  *
@@ -176,15 +191,15 @@ static const unsigned char  APPLICATION_SUB_REV =  1 ;  //!< Revision build Numb
 
 //___________________ SELEZIONE FUNZIONAMENTO _____________________
 //#define TEST_SWITCH
-#define TEST_REFERENCE 
-//#define RUN_CONST_CURRENT   // Corrente Fissa
+//#define TEST_REFERENCE 
+#define RUN_CONST_CURRENT   // Corrente Fissa
 //#define RUN_CONST_VOLTAGE // Regolazione tensione di uscita
 
 #define MOSFET_SWITCH_ENABLED // Attivazione Switching Mosfets
 
 //___________________ SELEZIONE FASE _____________________
-//#define GET_FASE_FROM_VAC
-#define GET_FASE_FROM_SIN
+#define GET_FASE_FROM_VAC
+//#define GET_FASE_FROM_SIN
 //#define GET_FASE_FROM_CONST 1
 
 //___________________ IMPOSTAZIONE DAC _____________________
@@ -197,10 +212,10 @@ static const unsigned char  APPLICATION_SUB_REV =  1 ;  //!< Revision build Numb
  
 //___________________ PERFORMANCES _____________________
 #define VAC_INPUT (220*1.4)    
-#define VAC_THRESHOLD 5
+#define VAC_THRESHOLD  (vac_threshold) // 5
 
 #define AC_SMP_TIME_us 120
-#define AC_FREQ 50
+#define AC_FREQ  50
 #define SIN_CORRECT_FASE_us 650
 
 // target di tensione e corrente
