@@ -27,11 +27,12 @@ float adconv_vac_fase(void){
     return fase ;
 }
 
-bool adconv_get_alarm(void){
-    if(alarm_VAC) return true;
-    if(alarm_overcurrent) return true;
-    
-    return false;
+unsigned short adconv_get_alarm(void){
+    return alarms;        
+}
+
+void adconv_set_init_overcurrent_alarm(void){
+    alarms |= ALARM_OUTPUT_INITIAL_OVERCURRENT;
 }
 void adconv_init(void){
         
@@ -59,9 +60,11 @@ void adconv_init(void){
     VOUT = 0;
     maxVOUT = 0;
     minVOUT = 0;
-    alarm_VAC = true;
+    
     ADC0Exec = false;
-    alarm_overcurrent = false;
+    
+    // Reset alarms
+    alarms = 0;
 
 }
 
@@ -127,14 +130,14 @@ void ADC0ExecProcedure(void){
     
     // Alarm of the VAC min value
     if(maxVAC < MIN_VAC_ALARM){
-        alarm_VAC = true;        
+        alarms |= ALARM_MIN_VAC;        
     }else if(maxVAC > MIN_VAC_RESET_ALARM){
-        alarm_VAC = false;        
+        alarms &=~ ALARM_MIN_VAC;        
     }
 
     // Short Circuit
     if(IOUT > MAX_IOUT_ALARM){ 
-        alarm_overcurrent = true;        
+        alarms |= ALARM_OUTPUT_OVERCURRENT;        
     }
 
     // Activates the Control Loop Procedures

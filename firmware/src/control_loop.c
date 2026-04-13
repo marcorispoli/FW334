@@ -6,7 +6,12 @@
 #include "adconv.h"
 #include "main.h"
 #include "adconv.h"
+#include "leds.h"
 #include <math.h>
+
+ static void InitializationControlLoop(bool init);
+ static bool AlarmControlLoop(void);
+
 
 void control_init(void){
     ControlExec = false;
@@ -20,9 +25,38 @@ void control_init(void){
     return;
 }
 
-void AlarmControlLoop(void){
-    outputActivation(false);
-    mosfetActivation(false);
+
+bool AlarmControlLoop(void){
+    static unsigned short alarms = 0xFFFF;
+    unsigned short cur_alarms = adconv_get_alarm();
+    
+    if(cur_alarms == alarms){
+      if(alarms) return true;
+      return false;
+    } 
+    alarms = cur_alarms;
+    
+    if(alarms){
+        // Spegne tutto!
+        outputActivation(false);
+        mosfetActivation(false);
+
+        if(alarms & ALARM_MIN_VAC){
+            LED_ALARM(true,0);
+        }else if(alarms & ALARM_OUTPUT_OVERCURRENT){
+            LED_ALARM(true,10);
+        }else if(alarms & ALARM_OUTPUT_INITIAL_OVERCURRENT){
+            LED_ALARM(true,50);
+        }else LED_ALARM(true,100);
+
+        return true;
+    }
+        
+    // Exit Alarm commands
+    LED_ALARM(false,0);
+    InitializationControlLoop(true); // Reset procedures
+
+    return false;
 }
 
 /**
@@ -40,12 +74,69 @@ void AlarmControlLoop(void){
  * can start.
  *  
  */
-void InitializationControlLoop(void){
+void InitializationControlLoop(bool init){
+    // This routine executes every about 120us
+    static unsigned int steps = 0;
+    static int counter = 0;
     
-    // Output Off
-    outputActivation(false);
-    mosfetActivation(false);
+    if(init){
+        // Reset procedure on request
+        steps = 0;
+        counter = 0;
+        LED_INITIALIZATION(false,0);
+        return;
+    }
+    
+    switch(steps){
+        case 0:
+            // Output Off
+            outputActivation(false);
+            mosfetActivation(false);
+            steps++;
+            LED_INITIALIZATION(true,0);
+            counter = 0;
+            break;
+            
+        case 1: // Waiting Vout stabilized to the VAC max value
+            if(adconv_get_vout() < MIN_VAC_RESET_ALARM){ 
+                counter = 0;
+                return;            
+            }
+            counter++;
+            if(counter > 500) steps++;            
+            break;
+        
+        case 2: // Open the Output mosfet to read the Load            
+            outputActivation(true);
+            counter = 0;
+            steps++;
+            break;
+            
+        case 3: // read the Load before to run the control Loop
+            if(adconv_get_iout() > INITIALIZATION_LOOP_MAX_CURRENT){
+                
+                // Va in allarme avendo assorbito troppa corrente da subito
+                outputActivation(false);
+                adconv_set_init_overcurrent_alarm();
+                steps = 0;
+                LED_INITIALIZATION(false,0);
+                return;
+            }
+            counter++;
+            if(counter > 500) steps++;
+            break;
+            
+        case 4:
+            // The Output is stable and the Load is not heavy
+            // The Initialization Loop can finish here!
+            LED_INITIALIZATION(false,0);
+            return;
+            break;
+    }
      
+    // legge la tensione in uscita ed attende che il valore si 
+    // stabilizzi al picco della tensione di rete
+    
     
    
     return;
@@ -122,16 +213,12 @@ void ControlLoop(void){
         return;
     #endif
     
-    // Alarm condition management
-    if(adconv_get_alarm()){ 
-        LED_FAULT_Set();                      
-        AlarmControlLoop();
-        return;
-    }else LED_FAULT_Clear();
+    // Alarm condition management 
+    if(AlarmControlLoop()) return;
     
     // Initialization Fase
     if(main_fase == MAIN_FASE_INIT_LOOP){ 
-        InitializationControlLoop();
+        InitializationControlLoop(false);
         return;
     }
            
@@ -214,13 +301,4 @@ void ControlLoop(void){
     DACVAL = DAC(Ifollow);
     DAC_DataWrite(DAC_CHANNEL_0,DACVAL);  
     
-     // Se la tensione massima di ingresso è bassa interrompe l'inseguimento
-    if(alarm_VAC)
-    {
-        mosfetActivation(false);
-        return;
-    }else{
-        mosfetActivation(true);
-    }
- 
 }

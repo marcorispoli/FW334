@@ -25,17 +25,18 @@
     volatile  float VOUT;
     volatile  float maxVOUT;
     volatile  float minVOUT;
-
+    
+    volatile unsigned short alarms;
 #else
     #define ext extern
     #define ext_static extern
 #endif
 
+#define ALARM_MIN_VAC                       0x1
+#define ALARM_OUTPUT_OVERCURRENT            0x2
+#define ALARM_OUTPUT_INITIAL_OVERCURRENT    0x4
 
-
-volatile ext bool alarm_VAC;
 volatile ext bool ADC0Exec;
-volatile ext bool alarm_overcurrent;
 
 ext void adconv_init(void);
 ext void ADC0ExecProcedure(void);
@@ -49,7 +50,12 @@ ext  float adconv_get_min_vout(void);
 ext  float adconv_get_vout(void);
 ext  float adconv_get_iout(void);
 ext  float adconv_vac_fase(void);
-ext  bool adconv_get_alarm(void);
+
+// Alarms Handling
+ext  unsigned short  adconv_get_alarm(void);
+ext  void  adconv_set_init_overcurrent_alarm(void);
+
+
 
 #endif 
     

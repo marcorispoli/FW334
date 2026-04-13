@@ -8,10 +8,10 @@
 #include "application.h"
 #include "control_loop.h"
 #include "adconv.h"
+#include "leds.h"
 #include "main.h"
 #include "Protocol/protocol.h"
 #include <math.h>
-
 
 
 #define _1024_ms_TriggerTime 0x1
@@ -27,10 +27,10 @@ void mosfetActivation(bool state){
 
     if(state){ 
         uc_SHDOWN_Clear();
-        LED1_Set();
+        LED_SWITCHING(true,0);
     }else{ 
         uc_SHDOWN_Set();        
-        LED1_Clear();
+        LED_SWITCHING(false,0);
     }
         
 
@@ -44,10 +44,10 @@ void outputActivation(bool state){
             
     if(state){ 
         uC_VOUT_ENA_Clear();
-        LED2_Set();
+        LED_OUTPUT(true,0);
     }else{ 
-        LED2_Clear();
-        uC_VOUT_ENA_Set();        
+        uC_VOUT_ENA_Set();
+        LED_OUTPUT(false,0);       
     }
 }
 
@@ -71,36 +71,6 @@ static void rtcEventHandler (RTC_TIMER32_INT_MASK intCause, uintptr_t context)
     
 }
 
-
-
-// Conversion of the AC input
-// 0xFFFF = 3.3V = 113.64 * 3.3 = 375 Vpk
-// V = 375 * n / 65536
-
-#ifdef TEST_SWITCH
-static void TC0callback(TC_TIMER_STATUS status, uintptr_t context){
-
-    static int count=0;
-    count++;
-    
-    if(count < 4) uc_SHDOWN_Clear();
-    else uc_SHDOWN_Set();
-    if(count == 5) count = 0;
-    
-    LED4_Toggle();
-}
-#endif
-
-
-
-
-
-
-
-
- 
-
-
 unsigned char comando = 0;
 static volatile float value;
 static bool RESET =true;
@@ -111,18 +81,12 @@ int main ( void )
     SYS_Initialize ( NULL );
     RESET =true;
     
-    // LED initialization
-    LED1_Clear(); // Assigned to Switching Activation Status
-    LED2_Clear(); // Assigned to Output-Switch Activation Status
-    LED3_Clear();
-    LED4_Clear();
-    LED5_Clear();
-    LED_FAULT_Clear();
+    
     
     // Output and switch disable
     outputActivation(false);
     mosfetActivation(false);
-    DAC_DataWrite(DAC_CHANNEL_0,0);
+    
     
     WDT_Clear(); 
     
@@ -134,7 +98,7 @@ int main ( void )
     //Application Protocol initialization
     ApplicationProtocolInit();
 #endif
-    
+    leds_init();
     adconv_init();
     control_init();
     
@@ -217,7 +181,7 @@ int main ( void )
         if(trigger_time & _15_64_ms_TriggerTime){
             trigger_time &=~ _15_64_ms_TriggerTime;      
  
-           
+            LedsControlLoop();
         }
        
     }
@@ -226,6 +190,7 @@ int main ( void )
 
     return ( EXIT_FAILURE );
 }
+
 
 /** @}*/
 /*******************************************************************************

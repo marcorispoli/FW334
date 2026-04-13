@@ -18,8 +18,7 @@
     volatile float Ifollow;
     volatile unsigned short DAC_IREF;
 
-    void InitializationControlLoop(void);
-    void AlarmControlLoop(void);
+   
 
 #else
     #define ext extern

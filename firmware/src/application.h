@@ -187,9 +187,9 @@ static const unsigned char  APPLICATION_SUB_REV =  1 ;  //!< Revision build Numb
 
 /** @}*/
 //___________________ SELEZIONE MODULI _____________________
-#define CAN_BUS_ACTIVATION      // Attivazione Can Bus
+//#define CAN_BUS_ACTIVATION      // Attivazione Can Bus
 //#define MOSFET_SWITCH_ENABLED   // Attivazione Switching Mosfets
-//#define OUTPUT_SWITCH_ENABLED   // Attivazione Output Mosfets
+#define OUTPUT_SWITCH_ENABLED   // Attivazione Output Mosfets
 
 //___________________ SELEZIONE FUNZIONAMENTO _____________________
 //#define TEST_SWITCH
@@ -226,6 +226,6 @@ static const unsigned char  APPLICATION_SUB_REV =  1 ;  //!< Revision build Numb
 #define MIN_VAC_ALARM (VAC_INPUT*0.5)
 #define MIN_VAC_RESET_ALARM (VAC_INPUT*0.7)
 
-
+#define INITIALIZATION_LOOP_MAX_CURRENT 2
 #define MAX_IOUT_ALARM 20
 #endif 
