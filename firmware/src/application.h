@@ -188,12 +188,10 @@ static const unsigned char  APPLICATION_SUB_REV =  1 ;  //!< Revision build Numb
 /** @}*/
 //___________________ SELEZIONE MODULI _____________________
 //#define CAN_BUS_ACTIVATION      // Attivazione Can Bus
-//#define MOSFET_SWITCH_ENABLED   // Attivazione Switching Mosfets
+#define MOSFET_SWITCH_ENABLED   // Attivazione Switching Mosfets
 #define OUTPUT_SWITCH_ENABLED   // Attivazione Output Mosfets
 
 //___________________ SELEZIONE FUNZIONAMENTO _____________________
-//#define TEST_SWITCH
-//#define TEST_REFERENCE 
 //#define RUN_CONST_CURRENT   // Corrente Fissa
 #define RUN_CONST_VOLTAGE // Regolazione tensione di uscita
 
@@ -205,8 +203,8 @@ static const unsigned char  APPLICATION_SUB_REV =  1 ;  //!< Revision build Numb
 
 //___________________ IMPOSTAZIONE DAC _____________________
 #define SENS_VREF 0.33       // Volt
-#define SENS_ISENSE 75     // mV/A
-#define DAC_REFERENCE 3.3   // Impostazione uC-DAC
+#define SENS_ISENSE 75       // mV/A
+#define DAC_REFERENCE 3.3    // Impostazione uC-DAC
 
 #define MAX_SENS_CURRENT (SENS_VREF*1000/SENS_ISENSE)
 #define DAC(I) (unsigned short) (I * SENS_ISENSE * 65.535 / DAC_REFERENCE)
@@ -218,14 +216,22 @@ static const unsigned char  APPLICATION_SUB_REV =  1 ;  //!< Revision build Numb
 #define AC_SMP_TIME_us 120
 #define AC_FREQ  50
 #define SIN_CORRECT_FASE_us 650
+#define RECOVERY_AC_CYCLES 5
 
 // target di tensione e corrente
-#define TARGET_VOLTAGE 560
-#define MAX_CURRENT 5
+#define TARGET_VOLTAGE  550
+#define TARGET_CURRENT  5
 
+
+// Valori limite di controllo
+#define INITIALIZATION_LOOP_MAX_CURRENT     3
+#define MAX_IOUT_ALARM                      20
+
+#define MAX_VOUT_VOLTAGE                    650
+#define MAX_RECOVERY_CURRENT                3
+#define MAX_INPUT_CURRENT                   15
+ 
 #define MIN_VAC_ALARM (VAC_INPUT*0.5)
 #define MIN_VAC_RESET_ALARM (VAC_INPUT*0.7)
 
-#define INITIALIZATION_LOOP_MAX_CURRENT 2
-#define MAX_IOUT_ALARM 20
 #endif 

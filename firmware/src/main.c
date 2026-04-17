@@ -107,8 +107,6 @@ int main ( void )
     #endif
 
     
-    main_fase = MAIN_FASE_INIT_LOOP;
-    
     while( true )
     {
         /* Maintain state machines of all polled MPLAB Harmony modules. */

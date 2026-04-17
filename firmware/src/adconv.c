@@ -21,7 +21,39 @@ float adconv_get_vout(void){return VOUT;}
 float adconv_get_iout(void){return IOUT;}
 
 float adconv_vac_fase(void){
-    float fase = (VAC - minVAC) / (maxVAC-minVAC);
+    float fase;
+    
+    #ifdef GET_FASE_FROM_VAC
+    fase = (VAC - minVAC) / (maxVAC-minVAC);    
+    #endif
+    
+    #ifdef GET_FASE_FROM_SIN
+    static int time = 0;
+    static bool synch = false;
+    
+    // Synch
+    if((!synch) && (VAC < minVAC + VAC_THRESHOLD)){
+        synch = true;
+        time = 0;        
+    }else{
+        time += AC_SMP_TIME_us;
+        
+        if(time >= 10 * (1000000/AC_FREQ)){ 
+            time = 0;
+            synch = false;
+        }
+        
+    }
+
+    // Sinusoide raddrizzata a 50Hz
+    fase = sin(6.28 * AC_FREQ * (time+SIN_CORRECT_FASE_us)/1000000);
+    if(fase < 0) fase = -fase;
+    #endif
+    
+    #ifdef GET_FASE_FROM_CONST
+        fase = GET_FASE_FROM_CONST;
+    #endif
+
     if(fase > 1) return 1;
     if(fase < 0 ) return 0;
     return fase ;

@@ -11,15 +11,6 @@
     #define ext
     #define ext_static static 
 
-    volatile unsigned short DACVAL;
-    volatile bool target;
-    volatile float Iref;
-    volatile int   output_voltage_level;
-    volatile float Ifollow;
-    volatile unsigned short DAC_IREF;
-
-   
-
 #else
     #define ext extern
     #define ext_static extern

@@ -9,19 +9,27 @@
 #include "leds.h"
 #include <math.h>
 
+volatile static float Ic_actual = 0; // Corrente di controllo attuale
+volatile static float Ic_instant = 0;   // Corrente di controllo istantanea
+
+
+    
+    
+// Execution fase 
+#define CONTROL_LOOP_INITIALIZATION 0
+#define CONTROL_LOOP_RUNNING        1
+#define CONTROL_LOOP_ALARM          2
+
+// Global Variables
+volatile static unsigned char control_loop_status = CONTROL_LOOP_INITIALIZATION;
+
  static void InitializationControlLoop(bool init);
  static bool AlarmControlLoop(void);
 
 
 void control_init(void){
+    control_loop_status = CONTROL_LOOP_INITIALIZATION;
     ControlExec = false;
-    DACVAL = 0;
-    target = false;
-    DAC_IREF = 0;
-    Iref = 0;
-    Ifollow = 0;
-    output_voltage_level = 0;
-    DAC_DataWrite(DAC_CHANNEL_0,0); 
     return;
 }
 
@@ -30,13 +38,19 @@ bool AlarmControlLoop(void){
     static unsigned short alarms = 0xFFFF;
     unsigned short cur_alarms = adconv_get_alarm();
     
+    // Non è cambiato lo stato degli allarmi
     if(cur_alarms == alarms){
       if(alarms) return true;
       return false;
     } 
     alarms = cur_alarms;
     
-    if(alarms){
+    if(alarms){        
+        control_loop_status = CONTROL_LOOP_ALARM;
+        
+        // Azzera la corrente di controllo 
+        Ic_actual = 0;
+        
         // Spegne tutto!
         outputActivation(false);
         mosfetActivation(false);
@@ -52,10 +66,9 @@ bool AlarmControlLoop(void){
         return true;
     }
         
-    // Exit Alarm commands
+    // Exit Alarm commands: enter the initialization fase
     LED_ALARM(false,0);
     InitializationControlLoop(true); // Reset procedures
-
     return false;
 }
 
@@ -84,6 +97,7 @@ void InitializationControlLoop(bool init){
         steps = 0;
         counter = 0;
         LED_INITIALIZATION(false,0);
+        control_loop_status = CONTROL_LOOP_INITIALIZATION;
         return;
     }
     
@@ -130,175 +144,131 @@ void InitializationControlLoop(bool init){
             // The Output is stable and the Load is not heavy
             // The Initialization Loop can finish here!
             LED_INITIALIZATION(false,0);
-            return;
+            steps = 0;
+            control_loop_status = CONTROL_LOOP_RUNNING; 
+            
+            Ic_actual = 0;
             break;
     }
      
-    // legge la tensione in uscita ed attende che il valore si 
-    // stabilizzi al picco della tensione di rete
-    
-    
    
     return;
 }
 
-#ifdef GET_FASE_FROM_SIN
-static  float getFaseFromFunc(void){
-    float fase = 0;
-    static int time = 0;
-    static bool synch = false;
+
+void ControlLoopConstantVoltage(void){
+    //static bool voltage_limit_condition = false;
     
+    float Ic_L;       // Corrente di controllo per eguagliare il carico
+    float Ic_C;       // Corrente di controllo per compensare la perdita di energia dai condensatori    
+    float Ic;         // Corrente di controllo
+   
+    // Acquisizione dati in ingresso
+    float VOUT = adconv_get_vout();     // Tensione di uscita campionata
+    float IOUT = adconv_get_iout();     // Corrente di uscita campionata
+    float VAC = adconv_get_max_vac();   // Tensione VAC di picco
     
-    // Synch
-    if((!synch) && (VAC < minVAC+VAC_THRESHOLD)){
-        synch = true;
-        time = 0;        
+    // L'aggiornamento della corrente di controllo avviene solo in corrispondenza 
+    // del minimo dalla tensione di ingresso
+    if(adconv_get_vac() < adconv_get_min_vac() + 5){
+        // Calcolo della corrente di controllo per compensare il carico
+        Ic_L = (IOUT * VOUT * 2.2) / (VAC) ;
+    
+        // Calcolo della corrente di controllo per recuperare la diminuzione della tensione sui condensatori
+        Ic_C = 0.2 *(TARGET_VOLTAGE*TARGET_VOLTAGE - VOUT*VOUT)/(VAC * RECOVERY_AC_CYCLES);
+        if(Ic_C > MAX_RECOVERY_CURRENT) Ic_C = MAX_RECOVERY_CURRENT;
+        
+        // Corrente totale di controllo limitata dal valore massimo ammesso
+        Ic = Ic_L + Ic_C;
+        if(Ic > MAX_INPUT_CURRENT) Ic = MAX_INPUT_CURRENT;
+                
+        Ic_actual = Ic;
+    }
+    
+    // In caso di Overvoltage, la tensione deve scendere sotto 
+    // il valore di controllo
+    /*
+    if(voltage_limit_condition){
+        if(VOUT < TARGET_VOLTAGE){
+            voltage_limit_condition = false;
+        }else Ic_actual = 0;        
     }else{
-        time += AC_SMP_TIME_us;
-        
-        if(time >= 10 * (1000000/AC_FREQ)){ 
-            time = 0;
-            synch = false;
+        if(VOUT >= MAX_VOUT_VOLTAGE){
+            Ic_actual = 0;
+            voltage_limit_condition = true;
         }
-        
     }
-
-    // Sinusoide raddrizzata a 50Hz
-    fase = sin(6.28 * AC_FREQ * (time+SIN_CORRECT_FASE_us)/1000000);
-    if(fase < 0) fase = -fase;
-    return fase;
-}
-#endif
-
-
-
-#ifdef TEST_REFERENCE
-static void ExecTestReference(void){
-    float fase = 0;
-    float Ifollow = 0;
-    static int time = 0; // useconds
-    
-    
-    uc_SHDOWN_Clear();
-    time += AC_SMP_TIME_us;
-    if(time >= 50000){ 
-       time = 0;
+    */
+    if(uc_OVERVOLTAGE_Get()){
+        LED_OVERCURRENT(true,0);
     }
-   
-
-    // Sinusoide raddrizzata a 50Hz
-    fase = sin(6.28 * 50 * time/1000000);
-    if(fase < 0) fase = -fase;
-    Ifollow = (MAX_CURRENT * fase);  
-    unsigned short DACVAL = DAC(Ifollow);
+    // per bassi valori di corrente disattiva lo switching
+    if(Ic_actual == 0){
+        mosfetActivation(false);
+    }else{
+        mosfetActivation(true);
+    }
     
-    DAC_DataWrite(DAC_CHANNEL_0,DACVAL);  
+    // Shape della corrente di controllo
+    Ic_instant = (Ic_actual * adconv_vac_fase());     
+    DAC_DataWrite(DAC_CHANNEL_0,DAC(Ic_instant));  
+    
     return;
 }
-#endif
 
+void ControlLoopConstantCurrent(){
+    static bool voltage_limit_condition = false; 
+    
+    // Acquisizione dati in ingresso
+    float VOUT = adconv_get_vout();     // Tensione di uscita campionata
+    Ic_actual = TARGET_CURRENT;
+    
+    
+    // In caso di Overvoltage, la tensione deve scendere sotto 
+    // il valore di controllo
+    if(voltage_limit_condition){
+        if(VOUT < TARGET_VOLTAGE){
+            voltage_limit_condition = false;
+        }else Ic_actual = 0;        
+    }else{
+        if(VOUT >= MAX_VOUT_VOLTAGE){
+            Ic_actual = 0;
+            voltage_limit_condition = true;
+        }
+    }
+
+    // per bassi valori di corrente disattiva lo switching
+    if(Ic_actual < 0.5){
+        mosfetActivation(false);
+    }else{
+        mosfetActivation(true);
+    }
+    
+    // Shape della corrente di controllo
+    Ic_instant = (Ic_actual * adconv_vac_fase());     
+    DAC_DataWrite(DAC_CHANNEL_0,DAC(Ic_instant));      
+    return;
+    
+}
 
 void ControlLoop(void){
-    static float fase = 0;
-    
-     #ifdef TEST_SWITCH
-        LED_FAULT_Clear();
-        DAC_DataWrite(DAC_CHANNEL_0,65535);
-        return;
-    #endif
-
-    #ifdef TEST_REFERENCE
-        LED_FAULT_Clear();
-        ExecTestReference();
-        return;
-    #endif
-    
+     
     // Alarm condition management 
     if(AlarmControlLoop()) return;
     
     // Initialization Fase
-    if(main_fase == MAIN_FASE_INIT_LOOP){ 
+    if(control_loop_status == CONTROL_LOOP_INITIALIZATION){ 
         InitializationControlLoop(false);
         return;
     }
            
-    // Normal Control
    
 #ifdef RUN_CONST_VOLTAGE
-    static float Inom = 0;
-    bool update = false;
-    float VOUT = adconv_get_vout();
-    float IOUT = adconv_get_iout();
+    ControlLoopConstantVoltage();
+#endif
     
-    
-    float ival = 1.41 * (IOUT * VOUT) / (adconv_get_max_vac()) ;
-    
-    if(ival < Inom * 0.7) update = true;
-    else if(ival > Inom * 1.3) update = true;
-    Inom = ival;
-    if(VOUT < TARGET_VOLTAGE-50) update = true;
-    if(VOUT > TARGET_VOLTAGE + 30 ) update = true;
-    if(adconv_get_vac() < adconv_get_min_vac() + 5) update = true;
-    
-    
-    if(VOUT < TARGET_VOLTAGE-100){
-        output_voltage_level = 0;
-        Inom = 3*Inom;
-    }else if(VOUT < TARGET_VOLTAGE-50){
-        output_voltage_level = 1;
-        Inom = 3*Inom;//Inom = 2.2*Inom;
-    }else if(VOUT < TARGET_VOLTAGE-20){
-        output_voltage_level = 2;
-        Inom = 3*Inom;//Inom = 1.8*Inom;
-    }else if(VOUT < TARGET_VOLTAGE-10){
-        output_voltage_level = 3;
-        Inom = 2*Inom;//Inom = 1.4*Inom;
-    }else if(VOUT < TARGET_VOLTAGE) {
-        output_voltage_level = 5;
-        Inom = 1.8*Inom;//Inom = Inom*1.2;
-    }else if(VOUT < TARGET_VOLTAGE+10) {
-        output_voltage_level = 5;
-        Inom = Inom;
-    }else if(VOUT < TARGET_VOLTAGE+20) {
-        output_voltage_level = 5;
-        Inom = 0.8 *Inom;
-    }else if(VOUT < TARGET_VOLTAGE+30) {
-        output_voltage_level = 5;
-        Inom = 0.6 *Inom;
-    }else if(VOUT > TARGET_VOLTAGE+30) {
-        output_voltage_level = 6;
-        Inom = 0.3 *Inom;
-    }
-    
-    if(update){
-        Iref = Inom;        
-    }
-
-    if(VOUT > 600) Iref= 0;
-    
-    // Massima corrente accettabile
-    if(Iref >MAX_CURRENT) Iref = MAX_CURRENT;
-#endif 
-
 #ifdef RUN_CONST_CURRENT
-    Iref = MAX_CURRENT;
+   ControlLoopConstantCurrent();
 #endif   
-             
-    
-    #ifdef GET_FASE_FROM_VAC
-        fase = adconv_vac_fase();
-    #endif
-    #ifdef GET_FASE_FROM_SIN
-        fase = getFaseFromFunc();
-    #endif
-    #ifdef GET_FASE_FROM_CONST
-        fase = GET_FASE_FROM_CONST;
-    #endif
-
-
-    // Shape della corrente
-    Ifollow = (Iref * fase);     
-    DACVAL = DAC(Ifollow);
-    DAC_DataWrite(DAC_CHANNEL_0,DACVAL);  
     
 }
