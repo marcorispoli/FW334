@@ -54,7 +54,7 @@ ext  float adconv_vac_fase(void);
 // Alarms Handling
 ext  unsigned short  adconv_get_alarm(void);
 ext  void  adconv_set_init_overcurrent_alarm(void);
-
+ext  bool  adconv_is_voltage_output_limit(void);
 
 
 #endif 

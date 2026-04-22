@@ -34,9 +34,13 @@ void control_init(void){
 }
 
 
-bool AlarmControlLoop(void){
+bool AlarmControlLoop(void){    
     static unsigned short alarms = 0xFFFF;
     unsigned short cur_alarms = adconv_get_alarm();
+    
+#ifdef DISABLE_ALARMS
+    return false;
+#endif
     
     // Non è cambiato lo stato degli allarmi
     if(cur_alarms == alarms){
@@ -88,9 +92,21 @@ bool AlarmControlLoop(void){
  *  
  */
 void InitializationControlLoop(bool init){
-    // This routine executes every about 120us
-    static unsigned int steps = 0;
-    static int counter = 0;
+// This routine executes every about 120us
+static unsigned int steps = 0;
+static int counter = 0;
+    
+    
+#ifdef DISABLE_INITIALIZATION
+     // The Output is stable and the Load is not heavy
+     // The Initialization Loop can finish here!
+     outputActivation(true);
+     LED_INITIALIZATION(false,0);
+     steps = 0;
+     control_loop_status = CONTROL_LOOP_RUNNING;           
+     Ic_actual = 0;
+#endif
+    
     
     if(init){
         // Reset procedure on request
@@ -157,7 +173,7 @@ void InitializationControlLoop(bool init){
 
 
 void ControlLoopConstantVoltage(void){
-    //static bool voltage_limit_condition = false;
+    
     
     float Ic_L;       // Corrente di controllo per eguagliare il carico
     float Ic_C;       // Corrente di controllo per compensare la perdita di energia dai condensatori    
@@ -185,23 +201,17 @@ void ControlLoopConstantVoltage(void){
         Ic_actual = Ic;
     }
     
-    // In caso di Overvoltage, la tensione deve scendere sotto 
-    // il valore di controllo
-    /*
-    if(voltage_limit_condition){
-        if(VOUT < TARGET_VOLTAGE){
-            voltage_limit_condition = false;
-        }else Ic_actual = 0;        
-    }else{
-        if(VOUT >= MAX_VOUT_VOLTAGE){
-            Ic_actual = 0;
-            voltage_limit_condition = true;
-        }
+    // In caso di Overvoltage, la tensione deve scendere sottoil valore di controllo
+    // In caso di Overvoltage, la tensione deve scendere sotto il valore di controllo
+    if(adconv_is_voltage_output_limit()){
+        Ic_actual = 0;        
     }
-    */
+    
+    
     if(uc_OVERVOLTAGE_Get()){
         LED_OVERCURRENT(true,0);
     }
+    
     // per bassi valori di corrente disattiva lo switching
     if(Ic_actual == 0){
         mosfetActivation(false);
@@ -217,25 +227,16 @@ void ControlLoopConstantVoltage(void){
 }
 
 void ControlLoopConstantCurrent(){
-    static bool voltage_limit_condition = false; 
     
     // Acquisizione dati in ingresso
-    float VOUT = adconv_get_vout();     // Tensione di uscita campionata
     Ic_actual = TARGET_CURRENT;
     
     
-    // In caso di Overvoltage, la tensione deve scendere sotto 
-    // il valore di controllo
-    if(voltage_limit_condition){
-        if(VOUT < TARGET_VOLTAGE){
-            voltage_limit_condition = false;
-        }else Ic_actual = 0;        
-    }else{
-        if(VOUT >= MAX_VOUT_VOLTAGE){
-            Ic_actual = 0;
-            voltage_limit_condition = true;
-        }
+    // In caso di Overvoltage, la tensione deve scendere sotto il valore di controllo
+    if(adconv_is_voltage_output_limit()){
+        Ic_actual = 0;        
     }
+    
 
     // per bassi valori di corrente disattiva lo switching
     if(Ic_actual < 0.5){
@@ -255,13 +256,13 @@ void ControlLoop(void){
      
     // Alarm condition management 
     if(AlarmControlLoop()) return;
-    
+
     // Initialization Fase
     if(control_loop_status == CONTROL_LOOP_INITIALIZATION){ 
         InitializationControlLoop(false);
         return;
     }
-           
+
    
 #ifdef RUN_CONST_VOLTAGE
     ControlLoopConstantVoltage();

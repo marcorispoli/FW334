@@ -11,6 +11,7 @@
 #include <math.h>
 
 static bool isVAC = true;
+static bool voltage_limit_condition = false;
 
 float adconv_get_max_vac(void){return maxVAC;}
 float adconv_get_min_vac(void){return minVAC;}
@@ -97,7 +98,7 @@ void adconv_init(void){
     
     // Reset alarms
     alarms = 0;
-
+    voltage_limit_condition = false;
 }
 
 
@@ -175,4 +176,28 @@ void ADC0ExecProcedure(void){
     // Activates the Control Loop Procedures
     ControlExec = true;    
     return;
+}
+
+bool adconv_is_voltage_output_limit(void){
+#ifdef DISABLE_OUTPUT_VOLTAGE_LIMIT
+    voltage_limit_condition = false;
+    return false;
+#endif
+    
+    if(voltage_limit_condition){
+        if(VOUT < TARGET_VOLTAGE){
+            voltage_limit_condition = false;
+            return false;
+        }
+        
+        return true;
+    }
+    
+    
+    if(VOUT >= MAX_VOUT_VOLTAGE){           
+        voltage_limit_condition = true;
+        return true;
+    }
+    return false;
+
 }

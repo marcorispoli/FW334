@@ -186,10 +186,15 @@ static const unsigned char  APPLICATION_MIN_REV =  0 ;  //!< Revision Minor Numb
 static const unsigned char  APPLICATION_SUB_REV =  1 ;  //!< Revision build Number
 
 /** @}*/
-//___________________ SELEZIONE MODULI _____________________
+//___________________ ABILITAZIONE FUNZIONI _____________________
 //#define CAN_BUS_ACTIVATION      // Attivazione Can Bus
 #define MOSFET_SWITCH_ENABLED   // Attivazione Switching Mosfets
 #define OUTPUT_SWITCH_ENABLED   // Attivazione Output Mosfets
+
+//#define DISABLE_ALARMS
+//#define DISABLE_INITIALIZATION
+//#define DISABLE_OUTPUT_VOLTAGE_LIMIT
+
 
 //___________________ SELEZIONE FUNZIONAMENTO _____________________
 //#define RUN_CONST_CURRENT   // Corrente Fissa
@@ -219,7 +224,7 @@ static const unsigned char  APPLICATION_SUB_REV =  1 ;  //!< Revision build Numb
 #define RECOVERY_AC_CYCLES 5
 
 // target di tensione e corrente
-#define TARGET_VOLTAGE  550
+#define TARGET_VOLTAGE  580
 #define TARGET_CURRENT  5
 
 
