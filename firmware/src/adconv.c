@@ -8,6 +8,7 @@
 #include "adconv.h"
 #include "control_loop.h"
 #include "main.h"
+#include "leds.h"
 #include <math.h>
 
 static bool isVAC = true;
@@ -179,14 +180,25 @@ void ADC0ExecProcedure(void){
 }
 
 bool adconv_is_voltage_output_limit(void){
+    
 #ifdef DISABLE_OUTPUT_VOLTAGE_LIMIT
     voltage_limit_condition = false;
     return false;
 #endif
+    float VTH;
+    if(IOUT > HARD_LOAD_CURRENT_THRESHOLD) VTH = MAX_VOUT_VOLTAGE_HARD;
+    else VTH = MAX_VOUT_VOLTAGE_LIGHT;
+    
+    // Very High Pulse
+    if(uc_OVERVOLTAGE_Get()){
+        LED_OVERCURRENT(true,0);
+        
+    }
     
     if(voltage_limit_condition){
         if(VOUT < TARGET_VOLTAGE){
             voltage_limit_condition = false;
+            
             return false;
         }
         
@@ -194,10 +206,12 @@ bool adconv_is_voltage_output_limit(void){
     }
     
     
-    if(VOUT >= MAX_VOUT_VOLTAGE){           
+    if(VOUT >= VTH){           
         voltage_limit_condition = true;
         return true;
     }
+    
+    LED_OVERCURRENT(false,0);
     return false;
 
 }

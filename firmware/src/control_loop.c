@@ -207,11 +207,7 @@ void ControlLoopConstantVoltage(void){
         Ic_actual = 0;        
     }
     
-    
-    if(uc_OVERVOLTAGE_Get()){
-        LED_OVERCURRENT(true,0);
-    }
-    
+        
     // per bassi valori di corrente disattiva lo switching
     if(Ic_actual == 0){
         mosfetActivation(false);

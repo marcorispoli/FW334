@@ -224,7 +224,7 @@ static const unsigned char  APPLICATION_SUB_REV =  1 ;  //!< Revision build Numb
 #define RECOVERY_AC_CYCLES 5
 
 // target di tensione e corrente
-#define TARGET_VOLTAGE  580
+#define TARGET_VOLTAGE  550
 #define TARGET_CURRENT  5
 
 
@@ -232,9 +232,14 @@ static const unsigned char  APPLICATION_SUB_REV =  1 ;  //!< Revision build Numb
 #define INITIALIZATION_LOOP_MAX_CURRENT     3
 #define MAX_IOUT_ALARM                      20
 
-#define MAX_VOUT_VOLTAGE                    650
-#define MAX_RECOVERY_CURRENT                3
-#define MAX_INPUT_CURRENT                   15
+// Voltage Limitation
+#define MAX_VOUT_VOLTAGE_HARD                    610
+#define MAX_VOUT_VOLTAGE_LIGHT                   (TARGET_VOLTAGE + 10)
+#define HARD_LOAD_CURRENT_THRESHOLD              1
+
+
+#define MAX_RECOVERY_CURRENT                5
+#define MAX_INPUT_CURRENT                   30
  
 #define MIN_VAC_ALARM (VAC_INPUT*0.5)
 #define MIN_VAC_RESET_ALARM (VAC_INPUT*0.7)
