@@ -173,7 +173,7 @@ static int counter = 0;
 
 
 void ControlLoopConstantVoltage(void){
-    
+    //static float PREV_IOUT = 0;
     
     float Ic_L;       // Corrente di controllo per eguagliare il carico
     float Ic_C;       // Corrente di controllo per compensare la perdita di energia dai condensatori    
@@ -184,14 +184,24 @@ void ControlLoopConstantVoltage(void){
     float IOUT = adconv_get_iout();     // Corrente di uscita campionata
     float VAC = adconv_get_max_vac();   // Tensione VAC di picco
     
+    
     // L'aggiornamento della corrente di controllo avviene solo in corrispondenza 
     // del minimo dalla tensione di ingresso
-    if(adconv_get_vac() < adconv_get_min_vac() + 5){
+    /*
+    if(
+            (adconv_get_vac() < adconv_get_min_vac() + 5) //||
+            //(IOUT > PREV_IOUT * 1.1)) // Correzione istantanea
+      )
+    {
+        
+    */
+    if(adconv_getCorrectionEvent()){
         // Calcolo della corrente di controllo per compensare il carico
         Ic_L = (IOUT * VOUT * 2.2) / (VAC) ;
-    
+        Ic_L = 0;
+        
         // Calcolo della corrente di controllo per recuperare la diminuzione della tensione sui condensatori
-        Ic_C = 0.2 *(TARGET_VOLTAGE*TARGET_VOLTAGE - VOUT*VOUT)/(VAC * RECOVERY_AC_CYCLES);
+        Ic_C = RECOVERY_COMPENSATION * 0.2 *(TARGET_VOLTAGE*TARGET_VOLTAGE - VOUT*VOUT)/(VAC * RECOVERY_AC_CYCLES);
         if(Ic_C > MAX_RECOVERY_CURRENT) Ic_C = MAX_RECOVERY_CURRENT;
         
         // Corrente totale di controllo limitata dal valore massimo ammesso
@@ -199,6 +209,7 @@ void ControlLoopConstantVoltage(void){
         if(Ic > MAX_INPUT_CURRENT) Ic = MAX_INPUT_CURRENT;
                 
         Ic_actual = Ic;
+        //PREV_IOUT = Ic_actual;
     }
     
     // In caso di Overvoltage, la tensione deve scendere sottoil valore di controllo

@@ -50,7 +50,7 @@ ext  float adconv_get_min_vout(void);
 ext  float adconv_get_vout(void);
 ext  float adconv_get_iout(void);
 ext  float adconv_vac_fase(void);
-
+ext  bool adconv_getCorrectionEvent(void);
 // Alarms Handling
 ext  unsigned short  adconv_get_alarm(void);
 ext  void  adconv_set_init_overcurrent_alarm(void);

@@ -22,6 +22,18 @@ float adconv_get_min_vout(void){return minVOUT;}
 float adconv_get_vout(void){return VOUT;}
 float adconv_get_iout(void){return IOUT;}
 
+static bool correction_event = false;
+static bool correction_event_trigger = true;
+
+bool adconv_getCorrectionEvent(void){
+    if(correction_event){
+        correction_event = false;
+        return true;
+    }
+    
+    return false;
+}
+
 float adconv_vac_fase(void){
     float fase;
     
@@ -58,6 +70,18 @@ float adconv_vac_fase(void){
 
     if(fase > 1) return 1;
     if(fase < 0 ) return 0;
+
+    if(correction_event_trigger){
+        if(fase < 0.25){
+            correction_event = true;
+            correction_event_trigger = false;
+        }    
+    }else{
+        if(fase > 0.8){
+            correction_event_trigger = true;
+        }            
+    }
+        
     return fase ;
 }
 
@@ -115,7 +139,8 @@ void ADC0_Callback(ADC_STATUS status, uintptr_t context){
       
     }else{
         IOUT = (float) ((((float) ADC0_ConversionResultGet() *4.95) / 65.535) - 2500)/100.0;
-        IOUT = IOUT * 860/1200;
+        // Correzione che non mi torna molto
+        //IOUT = IOUT * 860/1200;
         if(IOUT<0) IOUT = 0;
         ADC0_ChannelSelect( ADC_POSINPUT_AIN5, ADC_NEGINPUT_GND); 
         isVAC= true;

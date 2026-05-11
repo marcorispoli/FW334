@@ -202,8 +202,8 @@ static const unsigned char  APPLICATION_SUB_REV =  1 ;  //!< Revision build Numb
 
 
 //___________________ SELEZIONE FASE _____________________
-#define GET_FASE_FROM_VAC
-//#define GET_FASE_FROM_SIN
+//#define GET_FASE_FROM_VAC
+#define GET_FASE_FROM_SIN
 //#define GET_FASE_FROM_CONST 1
 
 //___________________ IMPOSTAZIONE DAC _____________________
@@ -215,33 +215,34 @@ static const unsigned char  APPLICATION_SUB_REV =  1 ;  //!< Revision build Numb
 #define DAC(I) (unsigned short) (I * SENS_ISENSE * 65.535 / DAC_REFERENCE)
  
 //___________________ PERFORMANCES _____________________
-#define VAC_INPUT (220*1.4)    
-#define VAC_THRESHOLD  (vac_threshold) // 5
+#define VAC_INPUT                           (220*1.4)    
+#define VAC_THRESHOLD                       (vac_threshold) // 5
 
-#define AC_SMP_TIME_us 120
-#define AC_FREQ  50
-#define SIN_CORRECT_FASE_us 650
-#define RECOVERY_AC_CYCLES 5
+#define AC_SMP_TIME_us                      120
+#define AC_FREQ                             50
+#define SIN_CORRECT_FASE_us                 650
+#define RECOVERY_AC_CYCLES                  1
+#define RECOVERY_COMPENSATION               1
 
 // target di tensione e corrente
-#define TARGET_VOLTAGE  550
-#define TARGET_CURRENT  5
+#define TARGET_VOLTAGE                      560
+#define TARGET_CURRENT                      5
 
 
 // Valori limite di controllo
 #define INITIALIZATION_LOOP_MAX_CURRENT     3
-#define MAX_IOUT_ALARM                      20
+#define MAX_IOUT_ALARM                      20  // Valore testato con successo sullo starter
 
 // Voltage Limitation
-#define MAX_VOUT_VOLTAGE_HARD                    610
-#define MAX_VOUT_VOLTAGE_LIGHT                   (TARGET_VOLTAGE + 10)
-#define HARD_LOAD_CURRENT_THRESHOLD              1
+#define MAX_VOUT_VOLTAGE_HARD               610
+#define MAX_VOUT_VOLTAGE_LIGHT              (TARGET_VOLTAGE + 10)
+#define HARD_LOAD_CURRENT_THRESHOLD         0.5
 
 
-#define MAX_RECOVERY_CURRENT                5
-#define MAX_INPUT_CURRENT                   30
+#define MAX_RECOVERY_CURRENT                40
+#define MAX_INPUT_CURRENT                   40
  
-#define MIN_VAC_ALARM (VAC_INPUT*0.5)
-#define MIN_VAC_RESET_ALARM (VAC_INPUT*0.7)
+#define MIN_VAC_ALARM                       (VAC_INPUT*0.5)
+#define MIN_VAC_RESET_ALARM                 (VAC_INPUT*0.7)
 
 #endif 
