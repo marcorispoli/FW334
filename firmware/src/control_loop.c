@@ -195,7 +195,7 @@ void ControlLoopConstantVoltage(void){
     {
         
     */
-    if(adconv_getCorrectionEvent()){
+    //if(adconv_getCorrectionEvent()){
         // Calcolo della corrente di controllo per compensare il carico
         Ic_L = (IOUT * VOUT * 2.2) / (VAC) ;
         Ic_L = 0;
@@ -210,7 +210,7 @@ void ControlLoopConstantVoltage(void){
                 
         Ic_actual = Ic;
         //PREV_IOUT = Ic_actual;
-    }
+    //}
     
     // In caso di Overvoltage, la tensione deve scendere sottoil valore di controllo
     // In caso di Overvoltage, la tensione deve scendere sotto il valore di controllo

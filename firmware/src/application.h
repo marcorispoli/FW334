@@ -202,8 +202,8 @@ static const unsigned char  APPLICATION_SUB_REV =  1 ;  //!< Revision build Numb
 
 
 //___________________ SELEZIONE FASE _____________________
-//#define GET_FASE_FROM_VAC
-#define GET_FASE_FROM_SIN
+#define GET_FASE_FROM_VAC
+//#define GET_FASE_FROM_SIN
 //#define GET_FASE_FROM_CONST 1
 
 //___________________ IMPOSTAZIONE DAC _____________________

@@ -155,7 +155,7 @@ void ADC0_Callback(ADC_STATUS status, uintptr_t context){
 // 116 us Conversion Time
 // 86 samples in a 100 Hz
 // Durata: 4.2us
-#define MAXMIN_VAC_CYCLES (10 * 10000/AC_SMP_TIME_us)
+#define MAXMIN_VAC_CYCLES (1 * 10000/AC_SMP_TIME_us)
 
 void ADC0ExecProcedure(void){
     static unsigned short  cycles = MAXMIN_VAC_CYCLES;
