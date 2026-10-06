@@ -191,14 +191,15 @@ static const unsigned char  APPLICATION_SUB_REV =  1 ;  //!< Revision build Numb
 #define MOSFET_SWITCH_ENABLED   // Attivazione Switching Mosfets
 #define OUTPUT_SWITCH_ENABLED   // Attivazione Output Mosfets
 
+//___________________ DISABILITAZIONE FUNZIONI _____________________
 //#define DISABLE_ALARMS
 //#define DISABLE_INITIALIZATION
 //#define DISABLE_OUTPUT_VOLTAGE_LIMIT
 
 
 //___________________ SELEZIONE FUNZIONAMENTO _____________________
-#define RUN_CONST_CURRENT   // Corrente Fissa
-//#define RUN_CONST_VOLTAGE // Regolazione tensione di uscita
+//#define RUN_CONST_CURRENT   // Corrente Fissa
+#define RUN_CONST_VOLTAGE // Regolazione tensione di uscita
 
 
 //___________________ SELEZIONE FASE _____________________
@@ -231,7 +232,7 @@ static const unsigned char  APPLICATION_SUB_REV =  1 ;  //!< Revision build Numb
 
 // target di tensione e corrente
 #define TARGET_VOLTAGE                      560 // In caso di controllo a tensione costante
-#define TARGET_CURRENT                      5   // In caso di controllo a corrente costante
+#define TARGET_CURRENT                      60   // In caso di controllo a corrente costante
 
 
 // Valori limite di controllo
@@ -244,7 +245,7 @@ static const unsigned char  APPLICATION_SUB_REV =  1 ;  //!< Revision build Numb
 #define HARD_LOAD_CURRENT_THRESHOLD         0.5
 
 
-#define MAX_RECOVERY_CURRENT                40
+#define MAX_RECOVERY_CURRENT                60
 #define MAX_INPUT_CURRENT                   60
  
 #define MIN_VAC_ALARM                       (VAC_INPUT*0.5)
