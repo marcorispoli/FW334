@@ -197,8 +197,8 @@ static const unsigned char  APPLICATION_SUB_REV =  1 ;  //!< Revision build Numb
 
 
 //___________________ SELEZIONE FUNZIONAMENTO _____________________
-//#define RUN_CONST_CURRENT   // Corrente Fissa
-#define RUN_CONST_VOLTAGE // Regolazione tensione di uscita
+#define RUN_CONST_CURRENT   // Corrente Fissa
+//#define RUN_CONST_VOLTAGE // Regolazione tensione di uscita
 
 
 //___________________ SELEZIONE FASE _____________________
@@ -207,12 +207,17 @@ static const unsigned char  APPLICATION_SUB_REV =  1 ;  //!< Revision build Numb
 //#define GET_FASE_FROM_CONST 1
 
 //___________________ IMPOSTAZIONE DAC _____________________
-#define SENS_VREF 0.33       // Volt
-#define SENS_ISENSE 75       // mV/A
-#define DAC_REFERENCE 3.3    // Impostazione uC-DAC
+#define SENS_VREF       0.33   // Volt
+#define SENS_ISENSE     75     // mV/A
+#define DAC_REFERENCE   3.3    // Impostazione uC-DAC
+#define Kc              1.447  // Amplificazione Tensione di DAC
 
 #define MAX_SENS_CURRENT (SENS_VREF*1000/SENS_ISENSE)
-#define DAC(I) (unsigned short) (I * SENS_ISENSE * 65.535 / DAC_REFERENCE)
+
+// Formula calcolo della corrente in funzione della tensione di dac
+// I = [(DAC/65536) * DAC_REFERENCE * Kc] * (1000 / SENS_ISENSE)
+// DAC = I * (SENS_ISENS/1000) * 65536 / (Kc * DAC_REFERENCE)
+#define DAC(I) ((unsigned short) (I * ((float) SENS_ISENSE * 65.536) / (Kc * DAC_REFERENCE)  ))
  
 //___________________ PERFORMANCES _____________________
 #define VAC_INPUT                           (220*1.4)    
@@ -225,8 +230,8 @@ static const unsigned char  APPLICATION_SUB_REV =  1 ;  //!< Revision build Numb
 #define RECOVERY_COMPENSATION               1
 
 // target di tensione e corrente
-#define TARGET_VOLTAGE                      560
-#define TARGET_CURRENT                      5
+#define TARGET_VOLTAGE                      560 // In caso di controllo a tensione costante
+#define TARGET_CURRENT                      5   // In caso di controllo a corrente costante
 
 
 // Valori limite di controllo
@@ -240,7 +245,7 @@ static const unsigned char  APPLICATION_SUB_REV =  1 ;  //!< Revision build Numb
 
 
 #define MAX_RECOVERY_CURRENT                40
-#define MAX_INPUT_CURRENT                   40
+#define MAX_INPUT_CURRENT                   60
  
 #define MIN_VAC_ALARM                       (VAC_INPUT*0.5)
 #define MIN_VAC_RESET_ALARM                 (VAC_INPUT*0.7)
